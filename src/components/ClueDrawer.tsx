@@ -23,7 +23,7 @@ export function ClueDrawer() {
 
       if (data) {
         const map: Record<string, boolean> = {};
-        data.forEach((row) => {
+        data.forEach((row: { clue_key: string; next_page_unlocked: boolean }) => {
           map[row.clue_key] = row.next_page_unlocked;
         });
         setUnlocked(map);

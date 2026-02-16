@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { GlassPanel } from "@/components/GlassPanel";
+import type { Session, AuthChangeEvent } from "@supabase/supabase-js";
 
 export function AuthListener() {
   const [showReset, setShowReset] = useState(false);
@@ -11,14 +12,16 @@ export function AuthListener() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const recoverySession = useRef<Session | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") {
+    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
+      if (event === "PASSWORD_RECOVERY" && session) {
+        recoverySession.current = session;
         setShowReset(true);
       }
     });
@@ -48,6 +51,15 @@ export function AuthListener() {
     }
 
     const supabase = createClient();
+
+    // Re-establish the recovery session before updating password
+    if (recoverySession.current) {
+      await supabase.auth.setSession({
+        access_token: recoverySession.current.access_token,
+        refresh_token: recoverySession.current.refresh_token,
+      });
+    }
+
     const { error } = await supabase.auth.updateUser({ password });
 
     if (error) {
