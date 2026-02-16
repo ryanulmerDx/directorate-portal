@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { GlassPanel } from "@/components/GlassPanel";
 
@@ -8,48 +8,6 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
-  const [ready, setReady] = useState(false);
-
-  // Exchange the code/token from the URL and establish a recovery session
-  useEffect(() => {
-    const supabase = createClient();
-
-    // Handle PKCE code exchange (code in query string)
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get("code");
-
-    if (code) {
-      supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
-        if (error) {
-          setError("Invalid or expired reset link.");
-        } else {
-          setReady(true);
-        }
-      });
-      return;
-    }
-
-    // Handle hash-based tokens (implicit flow fallback)
-    const hash = window.location.hash;
-    if (hash && hash.includes("access_token")) {
-      // The Supabase client auto-detects hash tokens on init
-      supabase.auth.onAuthStateChange((event) => {
-        if (event === "PASSWORD_RECOVERY") {
-          setReady(true);
-        }
-      });
-      return;
-    }
-
-    // No code or token — check if there's already an active session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setReady(true);
-      } else {
-        setError("No valid reset session. Please request a new reset link.");
-      }
-    });
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -110,22 +68,6 @@ export default function ResetPasswordPage() {
               >
                 Back to login
               </a>
-            </div>
-          ) : !ready ? (
-            <div className="text-center space-y-4">
-              {error ? (
-                <>
-                  <p className="text-red-400 text-sm">{error}</p>
-                  <a
-                    href="/login"
-                    className="inline-block mt-2 text-xs text-foreground/30 hover:text-matrix transition-colors"
-                  >
-                    Back to login
-                  </a>
-                </>
-              ) : (
-                <p className="text-foreground/40 text-sm">Verifying...</p>
-              )}
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
