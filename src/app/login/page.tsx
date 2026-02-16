@@ -55,36 +55,25 @@ export default function LoginPage() {
     setError(null);
 
     const form = new FormData(e.currentTarget);
-    const loginEmail = form.get("login_email") as string;
-    const actualEmail = form.get("actual_email") as string;
+    const loginEmail = (form.get("login_email") as string).trim();
+    const actualEmail = (form.get("actual_email") as string).trim();
 
-    // Verify agent_id (first 4 chars of login email) + actual email match
-    const agentId = loginEmail.substring(0, 4).toUpperCase();
-    const supabase = createClient();
-
-    const { data: isValid } = await supabase.rpc("verify_agent_for_reset", {
-      p_agent_id: agentId,
-      p_email: actualEmail,
+    const res = await fetch("/api/reset-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ loginEmail, actualEmail }),
     });
 
-    if (!isValid) {
-      setError("Agent ID and email do not match our records.");
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.error || "Something went wrong.");
       setLoading(false);
       return;
     }
 
-    const { error } = await supabase.auth.resetPasswordForEmail(actualEmail, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-      return;
-    }
-
-    setResetSent(true);
-    setLoading(false);
+    // Redirect to the recovery link — Supabase will set the session
+    window.location.href = data.actionLink;
   };
 
   return (
