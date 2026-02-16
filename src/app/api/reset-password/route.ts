@@ -36,14 +36,42 @@ export async function POST(request: NextRequest) {
     request.headers.get("origin") ||
     "https://directorate-portal.vercel.app";
 
-  // Send the reset email to the actual email address
-  const { error } = await supabase.auth.resetPasswordForEmail(actualEmail, {
-    redirectTo: `${siteUrl}/reset-password`,
+  // Generate a recovery link for the login email (the registered auth user)
+  const { data, error: linkError } = await supabase.auth.admin.generateLink({
+    type: "recovery",
+    email: loginEmail,
+    options: {
+      redirectTo: `${siteUrl}/reset-password`,
+    },
   });
 
-  if (error) {
+  if (linkError || !data?.properties?.action_link) {
     return NextResponse.json(
-      { error: error.message },
+      { error: "Failed to generate reset link." },
+      { status: 500 }
+    );
+  }
+
+  // Route the link through our /auth/confirm endpoint to exchange server-side
+  const actionUrl = new URL(data.properties.action_link);
+  const tokenHash = actionUrl.searchParams.get("token");
+  const type = actionUrl.searchParams.get("type");
+  const resetLink = `${siteUrl}/auth/confirm?token_hash=${tokenHash}&type=${type}&next=/reset-password`;
+
+  // Send to n8n webhook — n8n handles sending the email
+  const webhookRes = await fetch(process.env.N8N_RESET_WEBHOOK_URL!, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: actualEmail,
+      resetLink,
+      agentId,
+    }),
+  });
+
+  if (!webhookRes.ok) {
+    return NextResponse.json(
+      { error: "Failed to send reset email." },
       { status: 500 }
     );
   }
