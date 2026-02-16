@@ -409,15 +409,6 @@ export function AnswerGate({
                 </p>
               ))}
 
-              <button
-                onClick={handleReset}
-                className="mt-14 text-xs uppercase tracking-widest transition-colors"
-                style={{ color: "rgba(230,230,230,0.15)" }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = green)}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(230,230,230,0.15)")}
-              >
-                Reset
-              </button>
             </div>
           )}
         </div>
