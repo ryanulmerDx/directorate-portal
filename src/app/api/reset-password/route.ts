@@ -52,5 +52,14 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  return NextResponse.json({ actionLink: data.properties.action_link });
+  // The action link points to the Supabase hosted endpoint.
+  // Replace it to go through our own /auth/confirm route instead,
+  // which exchanges the token server-side and avoids JWT issues.
+  const actionUrl = new URL(data.properties.action_link);
+  const token_hash = actionUrl.searchParams.get("token");
+  const type = actionUrl.searchParams.get("type");
+
+  const confirmUrl = `${siteUrl}/auth/confirm?token_hash=${token_hash}&type=${type}&next=/reset-password`;
+
+  return NextResponse.json({ actionLink: confirmUrl });
 }

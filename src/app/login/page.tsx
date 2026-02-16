@@ -72,7 +72,7 @@ export default function LoginPage() {
       return;
     }
 
-    // Redirect to the recovery link — Supabase will set the session
+    // Redirect to the recovery link — exchanges token server-side
     window.location.href = data.actionLink;
   };
 
