@@ -40,7 +40,17 @@ export async function middleware(request: NextRequest) {
 
   // If cookie exists, call getUser() to refresh tokens (keeps session alive)
   if (hasAuthCookie) {
-    await supabase.auth.getUser();
+    const { error } = await supabase.auth.getUser();
+
+    // Stale cookie referencing a non-existent user — clear it
+    if (error) {
+      request.cookies.getAll()
+        .filter((c) => c.name.startsWith("sb-"))
+        .forEach((c) => {
+          request.cookies.delete(c.name);
+          supabaseResponse.cookies.delete(c.name);
+        });
+    }
   }
 
   return supabaseResponse;

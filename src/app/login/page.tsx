@@ -72,8 +72,8 @@ export default function LoginPage() {
       return;
     }
 
-    // Redirect to the recovery link — exchanges token server-side
-    window.location.href = data.actionLink;
+    setResetSent(true);
+    setLoading(false);
   };
 
   return (

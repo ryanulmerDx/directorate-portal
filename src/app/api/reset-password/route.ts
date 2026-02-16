@@ -31,35 +31,22 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Generate a recovery link for the login email (the registered auth user)
   const siteUrl =
     process.env.NEXT_PUBLIC_SITE_URL ||
     request.headers.get("origin") ||
     "https://directorate-portal.vercel.app";
 
-  const { data, error } = await supabase.auth.admin.generateLink({
-    type: "recovery",
-    email: loginEmail,
-    options: {
-      redirectTo: `${siteUrl}/reset-password`,
-    },
+  // Send the reset email to the actual email address
+  const { error } = await supabase.auth.resetPasswordForEmail(actualEmail, {
+    redirectTo: `${siteUrl}/reset-password`,
   });
 
-  if (error || !data?.properties?.action_link) {
+  if (error) {
     return NextResponse.json(
-      { error: "Failed to generate reset link." },
+      { error: error.message },
       { status: 500 }
     );
   }
 
-  // The action link points to the Supabase hosted endpoint.
-  // Replace it to go through our own /auth/confirm route instead,
-  // which exchanges the token server-side and avoids JWT issues.
-  const actionUrl = new URL(data.properties.action_link);
-  const token_hash = actionUrl.searchParams.get("token");
-  const type = actionUrl.searchParams.get("type");
-
-  const confirmUrl = `${siteUrl}/auth/confirm?token_hash=${token_hash}&type=${type}&next=/reset-password`;
-
-  return NextResponse.json({ actionLink: confirmUrl });
+  return NextResponse.json({ success: true });
 }
