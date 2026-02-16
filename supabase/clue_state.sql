@@ -55,3 +55,21 @@ create policy "Users can insert own agent"
 create policy "Users can update own agent"
   on public.agents for update
   using (auth.uid() = user_id);
+
+-- ─────────────────────────────────────────────────────────
+-- 7. RPC for password reset verification (bypasses RLS)
+-- ─────────────────────────────────────────────────────────
+create or replace function public.verify_agent_for_reset(
+  p_agent_id text,
+  p_email text
+) returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1 from agents
+    where agent_id = p_agent_id
+    and email = p_email
+  );
+$$;

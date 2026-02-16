@@ -58,13 +58,21 @@ export default function LoginPage() {
     const loginEmail = form.get("login_email") as string;
     const actualEmail = form.get("actual_email") as string;
 
-    if (loginEmail !== actualEmail) {
-      setError("Emails do not match.");
+    // Verify agent_id (first 4 chars of login email) + actual email match
+    const agentId = loginEmail.substring(0, 4).toUpperCase();
+    const supabase = createClient();
+
+    const { data: isValid } = await supabase.rpc("verify_agent_for_reset", {
+      p_agent_id: agentId,
+      p_email: actualEmail,
+    });
+
+    if (!isValid) {
+      setError("Agent ID and email do not match our records.");
       setLoading(false);
       return;
     }
 
-    const supabase = createClient();
     const { error } = await supabase.auth.resetPasswordForEmail(actualEmail, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
