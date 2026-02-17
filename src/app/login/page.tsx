@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { GlassPanel } from "@/components/GlassPanel";
 
 export default function LoginPage() {
@@ -25,14 +24,20 @@ export default function LoginPage() {
     setError(null);
 
     const form = new FormData(e.currentTarget);
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({
-      email: form.get("email") as string,
-      password: form.get("password") as string,
+
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: form.get("email") as string,
+        password: form.get("password") as string,
+      }),
     });
 
-    if (error) {
-      setError(error.message);
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.error || "Something went wrong.");
       setLoading(false);
       return;
     }
