@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { resetLimiter, webhookLimiter } from "@/lib/rate-limit";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -8,6 +9,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { error: "Both emails are required." },
       { status: 400 }
+    );
+  }
+
+  // Rate limit by actual email — 3 resets per hour
+  const resetLimit = resetLimiter.check(actualEmail.toLowerCase());
+  if (!resetLimit.allowed) {
+    return NextResponse.json(
+      { error: `Too many reset requests. Try again in ${Math.ceil(resetLimit.resetIn / 60000)} minutes.` },
+      { status: 429 }
     );
   }
 
@@ -57,6 +67,15 @@ export async function POST(request: NextRequest) {
   const tokenHash = actionUrl.searchParams.get("token");
   const type = actionUrl.searchParams.get("type");
   const resetLink = `${siteUrl}/auth/confirm?token_hash=${tokenHash}&type=${type}&next=/reset-password`;
+
+  // Rate limit webhook triggers — 10 per agent per minute
+  const webhookLimit = webhookLimiter.check(agentId);
+  if (!webhookLimit.allowed) {
+    return NextResponse.json(
+      { error: `Too many requests. Try again in ${Math.ceil(webhookLimit.resetIn / 1000)} seconds.` },
+      { status: 429 }
+    );
+  }
 
   // Send to n8n webhook — n8n handles sending the email
   const webhookRes = await fetch(process.env.N8N_RESET_WEBHOOK_URL!, {
