@@ -78,8 +78,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Send to n8n webhook — n8n handles sending the email
-  const n8nUrl = process.env.N8N_RESET_WEBHOOK_URL || "https://n8n.reachflowstudio.org/webhook/directorate/reset-password";
-  const webhookRes = await fetch(n8nUrl, {
+  const webhookRes = await fetch(process.env.N8N_RESET_WEBHOOK_URL!, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
