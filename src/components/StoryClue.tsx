@@ -11,6 +11,7 @@ interface StoryClueProps {
   answers: string[];
   rewardTitle: string;
   rewardBody: string[];
+  rewardImage?: string;
   children: React.ReactNode;
 }
 
@@ -65,6 +66,7 @@ export function StoryClue({
   answers,
   rewardTitle,
   rewardBody,
+  rewardImage,
   children,
 }: StoryClueProps) {
   const [unlocked, setUnlocked] = useState(false);
@@ -397,6 +399,24 @@ export function StoryClue({
               <h2 className="text-xl tracking-wider mb-6" style={{ fontFamily: font, color: textColor }}>
                 {rewardTitle}
               </h2>
+
+              {rewardImage && (
+                <div
+                  className="w-full rounded-xl border mb-6 overflow-hidden"
+                  style={{ borderColor: "rgba(0,255,65,0.1)" }}
+                >
+                  <img
+                    src={rewardImage}
+                    alt="Classified evidence"
+                    className="w-full h-auto"
+                  />
+                  <div className="px-4 py-2" style={{ background: "rgba(0,255,65,0.04)" }}>
+                    <p className="text-[10px] uppercase tracking-[0.2em] font-mono" style={{ color: "rgba(0,255,65,0.4)" }}>
+                      Surveillance Capture — Eyes Only
+                    </p>
+                  </div>
+                </div>
+              )}
 
               <div
                 className="w-full rounded-xl border p-6 text-left"

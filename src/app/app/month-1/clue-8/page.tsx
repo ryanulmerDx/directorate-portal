@@ -12,6 +12,7 @@ export default function M1C8() {
         "SUBJECT SHOWED SIGNS OF EMOTIONAL DISTRESS",
         "SESSION LASTED FOUR HOURS TWENTY THREE MINUTES",
       ]}
+      rewardImage="/camera_4_7.png"
       rewardTitle="SURVEILLANCE CONTINUATION — BEHAVIORAL ANALYSIS"
       rewardBody={[
         "Subject's access pattern suggests systematic research rather than random data theft. Focus areas:",
