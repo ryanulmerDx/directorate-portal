@@ -409,7 +409,7 @@ export default function M1C8() {
                 style={{ borderColor: "rgba(0,255,65,0.1)" }}
               >
                 <img
-                  src="/camera_4_7.png"
+                  src="/camera_4_7.jpg"
                   alt="Classified evidence"
                   className="w-full h-auto"
                 />
