@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 export function ClueDrawer() {
   const [open, setOpen] = useState(false);
   const [unlocked, setUnlocked] = useState<Record<string, boolean>>({});
+  const [programMonth, setProgramMonth] = useState(1);
 
   useEffect(() => {
     async function loadUnlocks() {
@@ -15,6 +16,17 @@ export function ClueDrawer() {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) return;
+
+      // Get program_month from agents table
+      const { data: agent } = await supabase
+        .from("agents")
+        .select("program_month")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (agent) {
+        setProgramMonth(agent.program_month);
+      }
 
       const { data } = await supabase
         .from("clue_state")
@@ -74,8 +86,8 @@ export function ClueDrawer() {
           </div>
 
           <div className="space-y-3">
-            {[1].map((month) => {
-              const visibleClues = [1, 2, 3, 4, 5].filter((clue) =>
+            {Array.from({ length: programMonth }, (_, i) => i + 1).map((month) => {
+              const visibleClues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].filter((clue) =>
                 isVisible(month, clue)
               );
               return (

@@ -4,7 +4,7 @@ import { ClueNav } from "@/components/ClueNav";
 import Link from "next/link";
 
 const VALID_MONTHS = ["month-1", "month-2", "month-3", "month-4"];
-const VALID_CLUES = ["clue-1", "clue-2", "clue-3", "clue-4", "clue-5"];
+const VALID_CLUES = ["clue-1", "clue-2", "clue-3", "clue-4", "clue-5", "clue-6", "clue-7", "clue-8", "clue-9", "clue-10"];
 
 interface CluePageProps {
   params: Promise<{ month: string; clue: string }>;
