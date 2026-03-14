@@ -32,38 +32,6 @@ export default function M1C8() {
         "",
         "ASSESSMENT: Subject appears to be conducting moral inventory of organizational actions, weighing costs against benefits. Motivation remains unclear.",
       ]}
-    >
-      <div className="space-y-4">
-        <p className="text-xs uppercase tracking-[0.3em] mb-4" style={{ color: "#00ff41" }}>
-          Surveillance Log - Internal Security
-        </p>
-
-        <div className="space-y-1">
-          <p><span style={{ color: "rgba(230,230,230,0.4)" }}>DATE:</span> 15 March 2025</p>
-          <p><span style={{ color: "rgba(230,230,230,0.4)" }}>LOCATION:</span> Archive Access Terminal 7</p>
-        </div>
-
-        <div className="mt-4">
-          <p className="text-xs uppercase tracking-[0.2em] mb-3" style={{ color: "rgba(230,230,230,0.4)" }}>
-            Encrypted Observation Notes:
-          </p>
-        </div>
-
-        <div
-          className="p-4 rounded-lg border space-y-2"
-          style={{ borderColor: "rgba(0,255,65,0.15)", background: "rgba(0,255,65,0.03)" }}
-        >
-          <p className="tracking-wider" style={{ color: "#e6e6e6" }}>VXEMHFW REVHUYHG DFFHVVLQJ HOHQQRU UHHG ILOHV</p>
-          <p className="tracking-wider" style={{ color: "#e6e6e6" }}>GRZQORDGHG WZR SRLQW WKUHH WHUDEBWHV</p>
-          <p className="tracking-wider" style={{ color: "#e6e6e6" }}>LQFOXGLQJ SHUVRQDO MRXUQDOV DQG FDVXDOWB UHSRUWV</p>
-          <p className="tracking-wider" style={{ color: "#e6e6e6" }}>VXEMHFW VKRZHG VLJQV RI HPRWLRQDO GLVWUHVV</p>
-          <p className="tracking-wider" style={{ color: "#e6e6e6" }}>VHVVLRQ ODVWHG IRXU KRXUV WZHQWB WKUHH PLQXWHV</p>
-        </div>
-
-        <p className="mt-3 text-xs italic" style={{ color: "rgba(230,230,230,0.35)" }}>
-          Use Caesar protocol with standard shift.
-        </p>
-      </div>
-    </StoryClue>
+    />
   );
 }

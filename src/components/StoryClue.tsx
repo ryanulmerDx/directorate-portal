@@ -12,7 +12,6 @@ interface StoryClueProps {
   rewardTitle: string;
   rewardBody: string[];
   rewardImage?: string;
-  children: React.ReactNode;
 }
 
 /* ── helpers ───────────────────────────────────────────── */
@@ -67,7 +66,6 @@ export function StoryClue({
   rewardTitle,
   rewardBody,
   rewardImage,
-  children,
 }: StoryClueProps) {
   const [unlocked, setUnlocked] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -249,7 +247,7 @@ export function StoryClue({
   }
 
   return (
-    <div className="flex flex-col items-center min-h-[calc(100vh-80px)] px-4 py-16">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 py-16">
       <div className="w-full max-w-2xl mb-10">
         <Link
           href="/app/dashboard"
@@ -262,28 +260,6 @@ export function StoryClue({
         </Link>
       </div>
 
-      {/* ── classified document panel ─────────────────── */}
-      <div
-        className="w-full max-w-2xl rounded-2xl border mb-6"
-        style={{
-          background: "#0a0a0a",
-          borderColor: "rgba(0,255,65,0.1)",
-          boxShadow: "0 0 40px rgba(0,255,65,0.04), inset 0 0 40px rgba(0,255,65,0.01)",
-        }}
-      >
-        <div className="px-8 pt-3 pb-2 border-b" style={{ borderColor: "rgba(0,255,65,0.1)" }}>
-          <p
-            className="text-[10px] uppercase tracking-[0.3em]"
-            style={{ color: "rgba(0,255,65,0.4)", fontFamily: font }}
-          >
-            Classified &bull; Month {month} &bull; Clue {clue}
-          </p>
-        </div>
-        <div className="px-8 py-6 font-mono text-sm leading-relaxed" style={{ color: "rgba(230,230,230,0.7)" }}>
-          {children}
-        </div>
-      </div>
-
       {/* ── answer gate / reward panel ────────────────── */}
       <div
         className="w-full max-w-2xl rounded-3xl border backdrop-blur-md"
@@ -294,28 +270,35 @@ export function StoryClue({
           animation: shaking ? "shake 0.4s ease-in-out" : "none",
         }}
       >
-        <div className="px-12 pt-10 pb-10 flex flex-col items-center text-center">
+        <div className="px-12 pt-14 pb-12 flex flex-col items-center text-center">
+          <p
+            className="text-xs uppercase tracking-[0.35em] mb-10"
+            style={{ color: "rgba(230,230,230,0.35)", fontFamily: font }}
+          >
+            Month {month} &bull; Clue {clue}
+          </p>
+
           {!lockHidden && (
-            <div className="mb-8">
+            <div className="mb-10">
               <LockIcon unlocked={unlocked} />
             </div>
           )}
 
           {!showReward && (
-            <h1 className="text-2xl tracking-wider mb-2" style={{ fontFamily: font, color: green }}>
-              {unlocked ? "ACCESS GRANTED" : "DECODE & SUBMIT"}
+            <h1 className="text-3xl tracking-wider mb-3" style={{ fontFamily: font, color: green }}>
+              {unlocked ? "ACCESS GRANTED" : "VERIFICATION REQUIRED"}
             </h1>
           )}
 
           {!showReward && !unlocked && (
-            <p className="text-sm mb-8" style={{ color: "rgba(230,230,230,0.45)" }}>
-              Decode the document above and enter the answer below.
+            <p className="text-base mb-12" style={{ color: "rgba(230,230,230,0.45)" }}>
+              Enter the correct phrase to proceed.
             </p>
           )}
 
           {unlocked && !showReward && (
             <p className="text-base mt-4" style={{ color: "#20d46b" }}>
-              &#10003; Decoded Successfully
+              &#10003; Phrase Verified
             </p>
           )}
 
