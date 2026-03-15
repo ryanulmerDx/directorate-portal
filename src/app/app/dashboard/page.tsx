@@ -1,4 +1,5 @@
 import { ClueDrawer } from "@/components/ClueDrawer";
+import { ToolsDrawer } from "@/components/ToolsDrawer";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function DashboardPage() {
@@ -34,6 +35,9 @@ export default async function DashboardPage() {
           animation: "spin-3d 20s linear infinite",
         }}
       />
+
+      {/* left tools drawer */}
+      <ToolsDrawer />
 
       {/* right clue drawer */}
       <ClueDrawer />
